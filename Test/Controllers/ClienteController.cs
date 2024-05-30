@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using PdfSharpCore.Drawing;
 using PdfSharpCore.Pdf;
 using PdfSharpCore.Pdf.AcroForms;
 using PdfSharpCore.Pdf.IO;
@@ -37,6 +38,45 @@ namespace Test.Controllers
             }
             return Ok(cliente);
         }
+
+        [HttpGet("export-all-pdf")]
+        public async Task<IActionResult> ExportAllToPdf()
+        {
+            var clientes = await _service.GetClientesAsync();
+            if (clientes == null || !clientes.Any())
+            {
+                return NotFound();
+            }
+
+            var templatePath = @"C:\Users\skimo\OneDrive\Escritorio\EjemploV3.pdf";
+            var memoryStream = new MemoryStream();
+
+            using (var outputPdf = new PdfDocument())
+            {
+                foreach (var cliente in clientes)
+                {
+                    using (var templatePdf = PdfReader.Open(templatePath, PdfDocumentOpenMode.Import))
+                    {
+                        foreach (var templatePage in templatePdf.Pages)
+                        {
+                            var page = outputPdf.AddPage(templatePage);
+
+                            // Rellenar los campos del formulario con los datos del cliente
+                            var form = templatePdf.AcroForm;
+                            form.Fields["Nombre"].Value = new PdfString(cliente.Nombre);
+                            form.Fields["Apellido"].Value = new PdfString(cliente.Apellido);
+                            form.Fields["Email"].Value = new PdfString(cliente.Email);
+                        }
+                    }
+                }
+
+                outputPdf.Save(memoryStream);
+            }
+
+            memoryStream.Position = 0;
+            return File(memoryStream, "application/pdf", "Todos_los_reportes.pdf");
+        }
+
 
         [HttpGet("{id}/export-pdf")]
         public async Task<IActionResult> ExportToPdf(int id)
