@@ -5,5 +5,7 @@ namespace Test.Interfaces
     public interface IGeneratePdfService
     {
         Task<Document> GeneratePdfQuest();
+
+        Task<Document> Uchalamama();
     }
 }

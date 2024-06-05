@@ -41,7 +41,7 @@ namespace Test.Controllers
         [HttpGet("allClientes")]
         public async Task<IActionResult> GetPdf()
         {
-            var report = await _generatePdfService.GeneratePdfQuest();
+            var report = await _generatePdfService.Uchalamama();
             byte[] pdfBytes = report.GeneratePdf();
             return File(pdfBytes, "application/pdf", "archivoxd");
         }
