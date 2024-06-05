@@ -1,5 +1,6 @@
 ﻿using QuestPDF.Fluent;
 using QuestPDF.Helpers;
+using System.IO;
 using QuestPDF.Infrastructure;
 using Test.Interfaces;
 
@@ -17,7 +18,8 @@ namespace Test.Services
         {
             var clientes = await _clientesService.GetClientesAsync();
 
-            var imageBytes = System.IO.File.ReadAllBytes(@"C:\Users\skimo\OneDrive\Escritorio\logo1.png");
+            var imageBytes = File.ReadAllBytes(@"C:\Users\skimo\OneDrive\Escritorio\logo1.png");
+            var imageBytes2 = File.ReadAllBytes(@"C:\Users\skimo\OneDrive\Escritorio\logoPC.png");
 
 
             var report = Document.Create(container =>
@@ -34,16 +36,22 @@ namespace Test.Services
                         page.Header().Row(row =>
                         {
                             row.ConstantItem(100).Image(imageBytes, ImageScaling.FitWidth);
-                            row.RelativeItem().Column(column =>
-                            {
-                                column.Item().AlignCenter().Text("PROTECCIÓN CIVIL SONORA").FontSize(20).Bold();
-                                column.Item().AlignCenter().Text("FICHA INFORMATIVA DEL SISTEMA DE INFORMACIÓN TELEFÓNICA").Bold().FontSize(16);
-                            });
+                            //Falta colocar esta imagen a ala dercha....
+                            row.ConstantItem(130).PaddingHorizontal(40).Image(imageBytes2, ImageScaling.FitWidth);
                         });
 
                         page.Content().PaddingVertical(10).Column(column =>
                         {
-                            column.Item().Text($"FOLIO: {cliente.Nombre}").Bold();
+                            column.Item().AlignCenter().Text("FICHA INFORMATIVA DEL SISTEMA DE INFORMACIÓN TELEFÓNICA").Bold().FontSize(16);
+
+                            //Aqui se separa Folio de cliente.nombre, cada string tiene su propio estilo..
+                            column.Item().Text(text =>
+                            {
+                                text.Span("FOLIO: ").Bold();
+                                text.Span($"{cliente.Nombre}");
+                            });
+                            
+                            //Falta hacerlo en esto.
                             column.Item().Text($"FECHA: {cliente.Email}").Bold();
                             column.Item().Text($"HORA DE INICIO: {cliente.Email}").Bold();
                             column.Item().Text($"TIPO DE EMERGENCIA: {cliente.Email}").Bold();
