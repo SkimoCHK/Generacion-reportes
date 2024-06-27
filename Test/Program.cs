@@ -10,6 +10,7 @@ QuestPDF.Settings.License = QuestPDF.Infrastructure.LicenseType.Community;
 builder.Services.AddScoped<IClientesService, ClienteServices>();
 builder.Services.AddScoped<IGeneratePdfService, GeneratePdfService>();
 builder.Services.AddScoped<IReportesDiversosService, ReportesDiversosService>();
+builder.Services.AddScoped<IGenerateExcelService, GenerateExcelService>();
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
